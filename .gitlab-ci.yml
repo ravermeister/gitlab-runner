@@ -1,0 +1,72 @@
+stages:
+  - build
+  - release
+
+variables:
+    IMAGE: ravermeister/gitlab-runner
+.imgjob:
+  image: docker
+  services:
+    - name: docker:dind
+      command: ["--experimental"]
+  variables:
+    DOCKER_DRIVER: overlay2
+    BUILDX_VERSION: v0.8.2
+    BUILDX_ARCHITECTURE: linux-arm64
+  tags:
+    - docker
+    - arm64
+  before_script:
+    - mkdir utils
+    - apk add --no-cache make bash curl
+    - mkdir -p ~/.docker/cli-plugins
+    - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.$BUILDX_ARCHITECTURE
+    - chmod +x ~/.docker/cli-plugins/docker-buildx
+
+arm32:
+  extends: .imgjob
+  stage: build
+  only:
+    - main
+    - develop
+  script:
+    - source ./assets/ci/version arm32
+    - echo ">${RELEASE}<"
+    - docker buildx create --use >/dev/null
+    - >
+      docker buildx build --no-cache --force-rm --compress --load 
+      --platform "linux/arm/v7" -t "arm32" -t "${RELEASE}"
+    - echo "TAGLIST_ARM32=arm32-${RELEASE}" >>versions.env
+  artifacts:
+    reports:
+      dotenv: versions.env
+
+arm64:
+  extends: .imgjob
+  stage: build
+  only:
+    - main
+    - develop
+  script:
+    - source ./assets/ci/version arm64
+    - echo ">${RELEASE}<"
+    - docker buildx create --use >/dev/null
+    - >
+      docker buildx build --no-cache --force-rm --compress --load 
+      --platform "linux/arm64" -t "arm64" -t "${RELEASE}"
+    - echo "TAGLIST_ARM64=arm64-${RELEASE}" >>versions.env
+  artifacts:
+    reports:
+      dotenv: versions.env
+
+dockerhub:
+  extends: .imgjob
+  stage: release
+  dependencies: 
+    - arm64
+    - arm32
+  only:
+    - main
+  script:
+    - export TAGLIST=${TAGLIST_ARM32}/${TAGLIST_ARM64}
+    - make push-manifest
