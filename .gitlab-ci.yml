@@ -69,4 +69,4 @@ dockerhub:
     - main
   script:
     - export TAGLIST=${TAGLIST_ARM32}/${TAGLIST_ARM64}
-    - make push-manifest
+    - ./release-manifest
