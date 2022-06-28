@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ "$1" = "arm32" ]; then
+	source ./version arm32
+	wget -qO /tmp/gitlab-runner "https://gitlab-runner-downloads.s3.amazonaws.com/v${RELEASE}/binaries/gitlab-runner-linux-arm"
+elif [ "$1" = "arm64" ];then
+	source ./version arm64
+	wget -qO /tmp/gitlab-runner "https://gitlab-runner-downloads.s3.amazonaws.com/v${RELEASE}/binaries/gitlab-runner-linux-arm64"
+else
+	echo "unknown architecture >$1<, only (arm32|arm64) is supported" >&2
+	exit 1
+fi
+
+chmod +x /tmp/gitlab-runner
+exit 0
+

@@ -11,4 +11,5 @@ else
   exit 1
 fi
 
-echo -n "${version}"
+export RELEASE="${version}"
+#echo -n "${version}"
