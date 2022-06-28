@@ -34,4 +34,4 @@ WORKDIR /home/grunner
 USER grunner
 
 EXPOSE 8093 8094
-ENTRYPOINT /bin/gitlab-runner run --working-directory /home/grunner --config /etc/gitlab-runner/config.toml --listen-address 0.0.0.0:8093
+ENTRYPOINT /bin/gitlab-runner run --working-directory /home/grunner --config /etc/gitlab-runner/config.toml --listen-address [::]:8093

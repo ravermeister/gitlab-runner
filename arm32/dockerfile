@@ -9,12 +9,30 @@ RUN set -eux; \
     export DEBIAN_FRONTEND=noninteractive &&\
     apt-get update -q &&\
     apt-get install -yq --no-install-recommends \
-      apt-transport-https ca-certificates less nano openssh-server \
-      tzdata libatomic1 vim wget \
+      apt-transport-https ca-certificates less nano \
+      tzdata libatomic1 vim wget procps \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && sed 's/session\s*required\s*pam_loginuid.so/session optional pam_loginuid.so/g' -i /etc/pam.d/sshd \
+    # && sed 's/session\s*required\s*pam_loginuid.so/session optional pam_loginuid.so/g' -i /etc/pam.d/sshd \
     # Remove MOTD
     && rm -rf /etc/update-motd.d /etc/motd /etc/motd.dynamic \
-    && ln -fs /dev/null /run/motd.dynamic
+    && ln -fs /dev/null /run/motd.dynamic \
+    # create user
+    && adduser grunner --system --group --home /home/grunner
 
+# Copy required assets
+COPY assets/ci VERSION /tmp/runner-setup/
+COPY assets/config.toml /etc/gitlab-runner/
+
+WORKDIR /tmp/runner-setup
+
+# download runner image
+RUN ./download arm32 &&\
+    mv /tmp/gitlab-runner /bin &&\
+    chown -R grunner:grunner /etc/gitlab-runner
+
+WORKDIR /home/grunner
+USER grunner
+
+EXPOSE 8093 8094
+ENTRYPOINT /bin/gitlab-runner run --working-directory /home/grunner --config /etc/gitlab-runner/config.toml --listen-address [::]:8093
