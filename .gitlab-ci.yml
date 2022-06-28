@@ -35,7 +35,9 @@ arm32:
     - docker buildx create --use >/dev/null
     - >
       docker buildx build --no-cache --force-rm --compress --load 
-      --platform "linux/arm/v7" -t "arm32" -t "${RELEASE}"
+      --platform "linux/arm/v7" -t "arm32" -t "${RELEASE}" "arm32/dockerfile" .
+    - docker buildx stop
+    - docker buildx rm
     - echo "TAGLIST_ARM32=arm32-${RELEASE}" >>versions.env
   artifacts:
     reports:
@@ -53,7 +55,9 @@ arm64:
     - docker buildx create --use >/dev/null
     - >
       docker buildx build --no-cache --force-rm --compress --load 
-      --platform "linux/arm64" -t "arm64" -t "${RELEASE}"
+      --platform "linux/arm64" -t "arm64" -t "${RELEASE}" "arm64/dockerfile" .
+    - docker buildx stop
+    - docker buildx rm
     - echo "TAGLIST_ARM64=arm64-${RELEASE}" >>versions.env
   artifacts:
     reports:
