@@ -21,7 +21,7 @@ variables:
     - arm64
   before_script:
     - mkdir utils
-    - apk add --no-cache make bash curl
+    - apk add --no-cache bash curl
     - mkdir -p ~/.docker/cli-plugins
     - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.$BUILDX_ARCHITECTURE
     - chmod +x ~/.docker/cli-plugins/docker-buildx
