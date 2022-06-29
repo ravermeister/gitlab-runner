@@ -56,7 +56,7 @@ arm64:
     - docker buildx create --use >/dev/null
     - >
       docker buildx build --no-cache --force-rm --compress --load 
-      --platform "linux/arm64" -t ""${IMAGE}:arm64" -t "${IMAGE}:${RELEASE}" -f "arm64/dockerfile" .
+      --platform "linux/arm64" -t "${IMAGE}:arm64" -t "${IMAGE}:${RELEASE}" -f "arm64/dockerfile" .
     - docker buildx stop
     - docker buildx rm
     - echo "TAGLIST_ARM64=arm64-${RELEASE}" >>versions.env
