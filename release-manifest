@@ -38,12 +38,12 @@ if [[ -n "${CI_REGISTRY}" ]] && [[ -n "${CI_REGISTRY_USER}" ]]; then
 
     CI_REGISTRY_IMAGE="${CI_REGISTRY}/${CI_REGISTRY_USER}/${IMAGE_NAME}"
 
-    for TAG in $(echo -n "${TAGLIST}" | tr "/" " "); do
-        TARGET="$(echo -n "$TAG" | cut -d "-" -f1)"
-        VERSION="$(echo -n "$TAG" | cut -d "-" -f2)"
-
-        tag "${IMAGE}:${TARGET}" "${CI_REGISTRY_IMAGE}:${TARGET}"
-    done
+#    for TAG in $(echo -n "${TAGLIST}" | tr "/" " "); do
+#        TARGET="$(echo -n "$TAG" | cut -d "-" -f1)"
+#        VERSION="$(echo -n "$TAG" | cut -d "-" -f2)"
+#
+#        tag "${IMAGE}:${TARGET}" "${CI_REGISTRY_IMAGE}:${TARGET}"
+#    done
 
     if [[ -n "${CI_REGISTRY_USER}" ]] && [[ -n "${CI_REGISTRY_PASSWORD}" ]]; then
         login "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" "${CI_REGISTRY}"
