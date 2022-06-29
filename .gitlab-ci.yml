@@ -3,7 +3,10 @@ stages:
   - release
 
 variables:
-    IMAGE: ravermeister/gitlab-runner
+  MAINTAINER: ravermeister
+  IMAGE_NAME: gitlab-runner
+  IMAGE: ${MAINTAINER}/${IMAGE_NAME}
+
 .imgjob:
   image: docker
   services:
@@ -12,7 +15,7 @@ variables:
   variables:
     DOCKER_DRIVER: overlay2
     BUILDX_VERSION: v0.8.2
-    BUILDX_ARCHITECTURE: linux-arm64
+    BUILDX_ARCHITECTURE: linux-arm64    
   tags:
     - docker
     - arm64
@@ -50,7 +53,6 @@ arm64:
     - develop
   script:
     - source ./assets/ci/version arm64
-    - echo ">${RELEASE}<"
     - docker buildx create --use >/dev/null
     - >
       docker buildx build --no-cache --force-rm --compress --load 
